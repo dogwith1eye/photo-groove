@@ -2,9 +2,6 @@
 import React from "react";
 import { counterCpt as Counter } from "../output/Counter";
 import { bicounterCpt as Bicounter } from "../output/Bicounter";
-//<Counter label="Count" />
-//<Counter label="Clicks" />
-//<Counter label="Interactions"/>
 
 function App() {
   return (
