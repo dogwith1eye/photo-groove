@@ -4,13 +4,14 @@ import Prelude
 import Data.Tuple.Nested ( (/\) )
 import Reactix as R
 import Reactix.DOM.HTML as H
+import Reactix.React (Element)
 
-type CounterProps = ( count :: Int )
+type Props = ( count :: Int )
 
 data BicounterOp = Inc | Dec
 
-bicounterCpt :: R.Component CounterProps
-bicounterCpt = R.hooksComponent "Bicounter" cpt
+bicounter :: R.Component Props
+bicounter = R.hooksComponent "Bicounter" cpt
   where
     cpt {count} _ = do
       y /\ reduceY <- R.useReducer' reduce count
@@ -20,3 +21,6 @@ bicounterCpt = R.hooksComponent "Bicounter" cpt
         , H.div {} [ H.text (show y) ] ]
     reduce count Inc = count + 1
     reduce count Dec = count - 1
+
+mkBicounter :: Record Props -> Element
+mkBicounter props = R.createElement bicounter props []
