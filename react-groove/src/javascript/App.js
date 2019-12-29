@@ -1,7 +1,7 @@
 // src/App.js
 import React from "react";
 import { jsCounter as Counter } from "../output/Counter.Interop";
-import { bicounterCpt as Bicounter } from "../output/Bicounter";
+import { jsEffcounter as Effcounter } from "../output/Effcounter.Interop";
 
 function App() {
   return (
@@ -11,7 +11,9 @@ function App() {
       <br />
       <Counter label="Huh" count="10" />
       <br />
-      <Bicounter count="0" />
+      <Effcounter />
+      <br />
+      <Effcounter counterType="decrement" onClick={x => console.log("clicked: ", x)} />
     </div>
   );
 }
