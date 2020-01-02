@@ -1,21 +1,28 @@
 // src/App.js
 import React from "react";
-import { jsCounter as Counter } from "../output/Counter.Interop";
-import { jsEffcounter as Effcounter } from "../output/Effcounter.Interop";
 
-function App() {
-  return (
-    <div>
-      <h1>My App</h1>
-      <Counter />
-      <br />
-      <Counter label="Huh" count="10" />
-      <br />
-      <Effcounter />
-      <br />
-      <Effcounter counterType="decrement" onClick={x => console.log("clicked: ", x)} />
-    </div>
+const App = () => {
+  const urlPrefix = "http://elm-in-action.com/";
+  const thumbnails = [{ url: "1.jpeg" }, { url: "2.jpeg" }, { url: "3.jpeg" }];
+
+  const viewThumbnailCol = thumb => (
+    <div class="columns">{viewThumbnail(thumb)}</div>
   );
-}
+
+  const viewThumbnail = thumb => (
+    <figure class="image is-200by267 is-marginless">
+      <img key={thumb.url} src={urlPrefix + thumb.url} />
+    </figure>
+  );
+
+  return (
+    <section class="section">
+      <div class="content">
+        <h1>Photo Groove</h1>
+        <div>{thumbnails.map(viewThumbnailCol)}</div>
+      </div>
+    </section>
+  );
+};
 
 export default App;
