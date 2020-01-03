@@ -2,13 +2,24 @@ module App where
 
 import Prelude
 
-import Data.Array (drop, length, take)
+import Data (Message(..), Photo)
+import Data.Array (length)
+import Data.Tuple.Nested ((/\))
+import Effect (Effect)
+import Helpers (chunks)
 import Reactix as R
 import Reactix.DOM.HTML as H
 import Reactix.React (Element)
+import Thumbnail (thumbnail)
 
 type Props = ()
-type Thumbnail = { url :: String }
+
+type Model = { photos :: Array Photo, selectedUrl :: String }
+
+reducer :: Model -> Message -> Model
+reducer model = case _ of
+  None -> model
+  ClickedPhoto url -> model { selectedUrl = url }
 
 app :: R.Component Props
 app = R.hooksComponent "App" cpt
@@ -16,38 +27,43 @@ app = R.hooksComponent "App" cpt
   urlPrefix :: String
   urlPrefix = "http://elm-in-action.com/"
 
-  thumbnails :: Array Thumbnail
-  thumbnails =
-    [ { url: "1.jpeg" }
-    , { url: "2.jpeg" }
-    , { url: "3.jpeg" }
-    ]
+  initialModel :: Model
+  initialModel =
+    { photos:
+      [ { url: "1.jpeg" }
+      , { url: "2.jpeg" }
+      , { url: "3.jpeg" }
+      ]
+    , selectedUrl: "1.jpeg"
+    }
 
-  viewThumbnailCols :: Array Thumbnail -> Array Element
-  viewThumbnailCols thumbs = cols <$> (chunks 2 thumbs)
+  viewThumbnailCols :: ((Message -> Message) -> Effect Unit) -> Model -> Array Element
+  viewThumbnailCols setMsg model = cols <$> (chunks 2 model.photos)
     where
-    cols :: Array Thumbnail -> Element
+    cols :: Array Photo -> Element
     cols xs = H.div { className: "columns" }
-      (column (length xs) <<< viewThumbnail <$> xs)
+      (viewThumbnail (length xs == 1) <$> xs)
 
-    column :: Int -> Element -> Element
-    column 1 a = H.div {className: "column is-half" } [ a ]
-    column _ a = H.div {className: "column" } [ a ]
-
-  viewThumbnail :: Thumbnail -> Element
-  viewThumbnail thumb =
-    H.figure { className: "image is-200by267 is-marginless" }
-      [ H.img { src: urlPrefix <> thumb.url } ]
-
-  chunks :: forall a. Int -> Array a -> Array (Array a)
-  chunks _ [] = []
-  chunks n xs = pure (take n xs) <> (chunks n $ drop n xs)
+    viewThumbnail :: Boolean -> Photo -> Element
+    viewThumbnail isHalf thumb =
+      thumbnail
+        { urlPrefix: urlPrefix
+        , url: thumb.url
+        , selected: thumb.url == model.selectedUrl
+        , isHalf: isHalf
+        , setMsg: setMsg
+        }
 
   cpt {} _ = do
+    model /\ dispatch <- R.useReducer' reducer initialModel
     pure $ H.section { className: "section" }
       [ H.div { className: "content" }
         [ H.h1 {} [ H.text "Photo Groove" ]
-        , H.div {} (viewThumbnailCols thumbnails) ]
+        , H.div { className: "columns" }
+          [ H.div { className: "column" } (viewThumbnailCols dispatch initialModel)
+          , H.div { className: "column" } [ H.img { className: "image is-fullwidth", src: urlPrefix <> initialModel.selectedUrl } ]
+          ]
+        ]
       ]
 
 mkApp :: Record Props -> Element
