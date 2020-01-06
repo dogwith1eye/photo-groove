@@ -1,35 +1,16 @@
 module PhotoGroove exposing (main)
 
-import Array exposing (Array)
 import Browser
-import Html exposing (Html, div, figure, h1, img, section, text)
+import Html exposing (div, figure, h1, img, section, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import List.Extra as ListE
 
 
-type alias Photo =
-    { url : String }
-
-
-type alias Model =
-    { photos : List Photo
-    , selectedUrl : String
-    }
-
-
-type alias Msg =
-    { description : String
-    , data : String
-    }
-
-
-urlPrefix : String
 urlPrefix =
     "http://elm-in-action.com/"
 
 
-initialModel : Model
 initialModel =
     { photos =
         [ { url = "1.jpeg" }
@@ -40,12 +21,6 @@ initialModel =
     }
 
 
-photoArray : Array Photo
-photoArray =
-    Array.fromList initialModel.photos
-
-
-viewThumbnailCols : String -> List Photo -> Html Msg
 viewThumbnailCols selectedUrl thumbs =
     let
         column a =
@@ -62,7 +37,6 @@ viewThumbnailCols selectedUrl thumbs =
         (List.map column thumbs)
 
 
-viewThumbnail : Photo -> Html Msg
 viewThumbnail thumb =
     figure [ class "image is-200by267 is-marginless" ]
         [ img
@@ -73,7 +47,6 @@ viewThumbnail thumb =
         ]
 
 
-view : Model -> Html Msg
 view model =
     section [ class "section" ]
         [ div [ class "content" ]
