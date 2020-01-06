@@ -10,15 +10,15 @@ import Reactix as R
 import Reactix.DOM.HTML as H
 import Reactix.React (Element)
 
-type Props = ( urlPrefix :: String, url :: String, selected :: Boolean, isHalf :: Boolean, setMsg :: (Message -> Message) -> Effect Unit)
+type Props = ( urlPrefix :: String, url :: String, selected :: Boolean, isHalf :: Boolean, reduceMsg :: Message -> Effect Unit)
 
 thumbnailCpt :: R.Component Props
 thumbnailCpt = R.hooksComponent "Thumbnail" cpt
   where
-  cpt { urlPrefix, url, selected, isHalf, setMsg } _ = do
+  cpt { urlPrefix, url, selected, isHalf, reduceMsg } _ = do
     pure $ H.div { className: classList [("column" /\ true), ("is-half" /\ isHalf), ("has-background-primary" /\ selected) ] }
       [ H.figure { className: "image is-200by267 is-marginless" }
-        [ H.img { src: urlPrefix <> url, on: { click: \_ -> setMsg (const (ClickedPhoto url)) } } ]
+        [ H.img { src: urlPrefix <> url, on: { click: \_ -> reduceMsg (ClickedPhoto url) } } ]
       ]
 
 thumbnail :: Record Props -> Element

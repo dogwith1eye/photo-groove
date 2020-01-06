@@ -37,8 +37,8 @@ app = R.hooksComponent "App" cpt
     , selectedUrl: "1.jpeg"
     }
 
-  viewThumbnailCols :: ((Message -> Message) -> Effect Unit) -> Model -> Array Element
-  viewThumbnailCols setMsg model = cols <$> (chunks 2 model.photos)
+  viewThumbnailCols :: (Message -> Effect Unit) -> Model -> Array Element
+  viewThumbnailCols reduceMsg model = cols <$> (chunks 2 model.photos)
     where
     cols :: Array Photo -> Element
     cols xs = H.div { className: "columns" }
@@ -51,7 +51,7 @@ app = R.hooksComponent "App" cpt
         , url: thumb.url
         , selected: thumb.url == model.selectedUrl
         , isHalf: isHalf
-        , setMsg: setMsg
+        , reduceMsg: reduceMsg
         }
 
   cpt {} _ = do
@@ -60,8 +60,8 @@ app = R.hooksComponent "App" cpt
       [ H.div { className: "content" }
         [ H.h1 {} [ H.text "Photo Groove" ]
         , H.div { className: "columns" }
-          [ H.div { className: "column" } (viewThumbnailCols dispatch initialModel)
-          , H.div { className: "column" } [ H.img { className: "image is-fullwidth", src: urlPrefix <> initialModel.selectedUrl } ]
+          [ H.div { className: "column" } (viewThumbnailCols dispatch model)
+          , H.div { className: "column" } [ H.img { className: "image is-fullwidth", src: urlPrefix <> model.selectedUrl } ]
           ]
         ]
       ]
