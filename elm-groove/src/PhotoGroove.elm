@@ -2,7 +2,7 @@ module PhotoGroove exposing (main)
 
 import Array exposing (Array)
 import Browser
-import Html exposing (Html, div, figure, h1, img, section, text)
+import Html exposing (Html, a, button, div, figure, h1, img, input, label, p, section, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import List.Extra as ListE
@@ -12,16 +12,49 @@ type alias Photo =
     { url : String }
 
 
+type ThumbnailColor
+    = Primary
+    | Info
+    | Danger
+
+
+colorToString : ThumbnailColor -> String
+colorToString size =
+    case size of
+        Primary ->
+            "Primary"
+
+        Info ->
+            "Info"
+
+        Danger ->
+            "Danger"
+
+
+colorToClass : ThumbnailColor -> String
+colorToClass size =
+    case size of
+        Primary ->
+            "has-background-primary"
+
+        Info ->
+            "has-background-info"
+
+        Danger ->
+            "has-background-danger"
+
+
 type alias Model =
     { photos : List Photo
     , selectedUrl : String
+    , chosenColor : ThumbnailColor
     }
 
 
-type alias Msg =
-    { description : String
-    , data : String
-    }
+type Msg
+    = ClickedPhoto String
+    | ClickedColor ThumbnailColor
+    | ClickedSurpriseMe
 
 
 urlPrefix : String
@@ -37,6 +70,7 @@ initialModel =
         , { url = "3.jpeg" }
         ]
     , selectedUrl = "1.jpeg"
+    , chosenColor = Primary
     }
 
 
@@ -45,18 +79,21 @@ photoArray =
     Array.fromList initialModel.photos
 
 
-viewThumbnailCols : String -> List Photo -> Html Msg
-viewThumbnailCols selectedUrl thumbs =
+viewThumbnailCols : ThumbnailColor -> String -> List Photo -> Html Msg
+viewThumbnailCols color selectedUrl thumbs =
     let
         column a =
             div
                 [ classList
                     [ ( "column", True )
                     , ( "is-half", List.length thumbs == 1 )
-                    , ( "has-background-primary", a.url == selectedUrl )
+                    , ( colorClass, a.url == selectedUrl )
                     ]
                 ]
                 [ viewThumbnail a ]
+
+        colorClass =
+            colorToClass color
     in
     div [ class "columns" ]
         (List.map column thumbs)
@@ -64,12 +101,18 @@ viewThumbnailCols selectedUrl thumbs =
 
 viewThumbnail : Photo -> Html Msg
 viewThumbnail thumb =
-    figure [ class "image is-200by267 is-marginless" ]
+    figure [ class "image" ]
         [ img
-            [ src (urlPrefix ++ thumb.url)
-            , onClick { description = "ClickedPhoto", data = thumb.url }
-            ]
+            [ src (urlPrefix ++ thumb.url), onClick (ClickedPhoto thumb.url) ]
             []
+        ]
+
+
+viewColorChooser : ThumbnailColor -> Html Msg
+viewColorChooser color =
+    label [ class "radio" ]
+        [ input [ type_ "radio", name "color", onClick (ClickedColor color) ] []
+        , text (colorToString color)
         ]
 
 
@@ -79,19 +122,33 @@ view model =
         [ div [ class "content" ]
             [ h1 [] [ text "Photo Groove" ]
             , div [ class "columns" ]
-                [ div [ class "column" ] (model.photos |> ListE.greedyGroupsOf 2 |> List.map (viewThumbnailCols model.selectedUrl))
+                [ div [ class "column" ]
+                    [ div [ class "field is-grouped" ]
+                        [ p [ class "control" ]
+                            [ a [ class "button is-primary", onClick ClickedSurpriseMe ] [ text "Surprise Me!" ] ]
+                        , div [ class "control" ] (List.map viewColorChooser [ Primary, Info, Danger ])
+                        ]
+                    ]
+                ]
+            , div [ class "columns" ]
+                [ div [ class "column" ] (model.photos |> ListE.greedyGroupsOf 2 |> List.map (viewThumbnailCols model.chosenColor model.selectedUrl))
                 , div [ class "column" ] [ img [ src (urlPrefix ++ model.selectedUrl), class "image is-fullwidth" ] [] ]
                 ]
             ]
         ]
 
 
+update : Msg -> Model -> Model
 update msg model =
-    if msg.description == "ClickedPhoto" then
-        { model | selectedUrl = msg.data }
+    case msg of
+        ClickedPhoto url ->
+            { model | selectedUrl = url }
 
-    else
-        model
+        ClickedColor color ->
+            { model | chosenColor = color }
+
+        ClickedSurpriseMe ->
+            { model | selectedUrl = "2.jpeg" }
 
 
 main =

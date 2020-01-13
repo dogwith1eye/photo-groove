@@ -4435,7 +4435,9 @@ var $elm$core$Set$toList = function (_v0) {
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
+var $author$project$PhotoGroove$Primary = {$: 'Primary'};
 var $author$project$PhotoGroove$initialModel = {
+	chosenColor: $author$project$PhotoGroove$Primary,
 	photos: _List_fromArray(
 		[
 			{url: '1.jpeg'},
@@ -5176,10 +5178,27 @@ var $elm$browser$Browser$sandbox = function (impl) {
 };
 var $author$project$PhotoGroove$update = F2(
 	function (msg, model) {
-		return (msg.description === 'ClickedPhoto') ? _Utils_update(
-			model,
-			{selectedUrl: msg.data}) : model;
+		switch (msg.$) {
+			case 'ClickedPhoto':
+				var url = msg.a;
+				return _Utils_update(
+					model,
+					{selectedUrl: url});
+			case 'ClickedColor':
+				var color = msg.a;
+				return _Utils_update(
+					model,
+					{chosenColor: color});
+			default:
+				return _Utils_update(
+					model,
+					{selectedUrl: '2.jpeg'});
+		}
 	});
+var $author$project$PhotoGroove$ClickedSurpriseMe = {$: 'ClickedSurpriseMe'};
+var $author$project$PhotoGroove$Danger = {$: 'Danger'};
+var $author$project$PhotoGroove$Info = {$: 'Info'};
+var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -5353,6 +5372,24 @@ var $elm_community$list_extra$List$Extra$greedyGroupsOf = F2(
 	});
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$section = _VirtualDom_node('section');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -5363,6 +5400,46 @@ var $elm$html$Html$Attributes$src = function (url) {
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
+var $author$project$PhotoGroove$ClickedColor = function (a) {
+	return {$: 'ClickedColor', a: a};
+};
+var $author$project$PhotoGroove$colorToString = function (size) {
+	switch (size.$) {
+		case 'Primary':
+			return 'Primary';
+		case 'Info':
+			return 'Info';
+		default:
+			return 'Danger';
+	}
+};
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $author$project$PhotoGroove$viewColorChooser = function (color) {
+	return A2(
+		$elm$html$Html$label,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('radio')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$input,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$type_('radio'),
+						$elm$html$Html$Attributes$name('color'),
+						$elm$html$Html$Events$onClick(
+						$author$project$PhotoGroove$ClickedColor(color))
+					]),
+				_List_Nil),
+				$elm$html$Html$text(
+				$author$project$PhotoGroove$colorToString(color))
+			]));
+};
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -5388,30 +5465,26 @@ var $elm$html$Html$Attributes$classList = function (classes) {
 				$elm$core$Tuple$first,
 				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
 };
+var $author$project$PhotoGroove$colorToClass = function (size) {
+	switch (size.$) {
+		case 'Primary':
+			return 'has-background-primary';
+		case 'Info':
+			return 'has-background-info';
+		default:
+			return 'has-background-danger';
+	}
+};
+var $author$project$PhotoGroove$ClickedPhoto = function (a) {
+	return {$: 'ClickedPhoto', a: a};
+};
 var $elm$html$Html$figure = _VirtualDom_node('figure');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $author$project$PhotoGroove$viewThumbnail = function (thumb) {
 	return A2(
 		$elm$html$Html$figure,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('image is-200by267 is-marginless')
+				$elm$html$Html$Attributes$class('image')
 			]),
 		_List_fromArray(
 			[
@@ -5422,13 +5495,14 @@ var $author$project$PhotoGroove$viewThumbnail = function (thumb) {
 						$elm$html$Html$Attributes$src(
 						_Utils_ap($author$project$PhotoGroove$urlPrefix, thumb.url)),
 						$elm$html$Html$Events$onClick(
-						{data: thumb.url, description: 'ClickedPhoto'})
+						$author$project$PhotoGroove$ClickedPhoto(thumb.url))
 					]),
 				_List_Nil)
 			]));
 };
-var $author$project$PhotoGroove$viewThumbnailCols = F2(
-	function (selectedUrl, thumbs) {
+var $author$project$PhotoGroove$viewThumbnailCols = F3(
+	function (color, selectedUrl, thumbs) {
+		var colorClass = $author$project$PhotoGroove$colorToClass(color);
 		var column = function (a) {
 			return A2(
 				$elm$html$Html$div,
@@ -5442,7 +5516,7 @@ var $author$project$PhotoGroove$viewThumbnailCols = F2(
 								'is-half',
 								$elm$core$List$length(thumbs) === 1),
 								_Utils_Tuple2(
-								'has-background-primary',
+								colorClass,
 								_Utils_eq(a.url, selectedUrl))
 							]))
 					]),
@@ -5497,9 +5571,67 @@ var $author$project$PhotoGroove$view = function (model) {
 									[
 										$elm$html$Html$Attributes$class('column')
 									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('field is-grouped')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$p,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('control')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$a,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('button is-primary'),
+																$elm$html$Html$Events$onClick($author$project$PhotoGroove$ClickedSurpriseMe)
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Surprise Me!')
+															]))
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('control')
+													]),
+												A2(
+													$elm$core$List$map,
+													$author$project$PhotoGroove$viewColorChooser,
+													_List_fromArray(
+														[$author$project$PhotoGroove$Primary, $author$project$PhotoGroove$Info, $author$project$PhotoGroove$Danger])))
+											]))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('columns')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('column')
+									]),
 								A2(
 									$elm$core$List$map,
-									$author$project$PhotoGroove$viewThumbnailCols(model.selectedUrl),
+									A2($author$project$PhotoGroove$viewThumbnailCols, model.chosenColor, model.selectedUrl),
 									A2($elm_community$list_extra$List$Extra$greedyGroupsOf, 2, model.photos))),
 								A2(
 								$elm$html$Html$div,

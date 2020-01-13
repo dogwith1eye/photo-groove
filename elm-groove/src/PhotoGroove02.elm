@@ -1,4 +1,4 @@
-module PhotoGroove exposing (main)
+module PhotoGroove02 exposing (main)
 
 import Browser
 import Html exposing (div, figure, h1, img, section, text)
