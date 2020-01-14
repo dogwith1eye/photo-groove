@@ -2,59 +2,11 @@ module PhotoGroove exposing (main)
 
 import Array exposing (Array)
 import Browser
-import Html exposing (Html, a, button, div, figure, h1, img, input, label, p, section, text)
+import Html exposing (Html, a, div, figure, h1, img, input, label, p, section, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import List.Extra as ListE
-
-
-type alias Photo =
-    { url : String }
-
-
-type ThumbnailColor
-    = Primary
-    | Info
-    | Danger
-
-
-colorToString : ThumbnailColor -> String
-colorToString size =
-    case size of
-        Primary ->
-            "Primary"
-
-        Info ->
-            "Info"
-
-        Danger ->
-            "Danger"
-
-
-colorToClass : ThumbnailColor -> String
-colorToClass size =
-    case size of
-        Primary ->
-            "has-background-primary"
-
-        Info ->
-            "has-background-info"
-
-        Danger ->
-            "has-background-danger"
-
-
-type alias Model =
-    { photos : List Photo
-    , selectedUrl : String
-    , chosenColor : ThumbnailColor
-    }
-
-
-type Msg
-    = ClickedPhoto String
-    | ClickedColor ThumbnailColor
-    | ClickedSurpriseMe
+import Random
 
 
 urlPrefix : String
@@ -62,21 +14,33 @@ urlPrefix =
     "http://elm-in-action.com/"
 
 
-initialModel : Model
-initialModel =
-    { photos =
-        [ { url = "1.jpeg" }
-        , { url = "2.jpeg" }
-        , { url = "3.jpeg" }
+type Msg
+    = ClickedPhoto String
+    | ClickedColor ThumbnailColor
+    | ClickedSurpriseMe
+    | GotSelectedIndex Int
+
+
+view : Model -> Html Msg
+view model =
+    section [ class "section" ]
+        [ div [ class "content" ]
+            [ h1 [] [ text "Photo Groove" ]
+            , div [ class "columns" ]
+                [ div [ class "column" ]
+                    [ div [ class "field is-grouped" ]
+                        [ p [ class "control" ]
+                            [ a [ class "button is-primary", onClick ClickedSurpriseMe ] [ text "Surprise Me!" ] ]
+                        , div [ class "control" ] (List.map viewColorChooser [ Primary, Info, Danger ])
+                        ]
+                    ]
+                ]
+            , div [ class "columns" ]
+                [ div [ class "column" ] (model.photos |> ListE.greedyGroupsOf 2 |> List.map (viewThumbnailCols model.chosenColor model.selectedUrl))
+                , div [ class "column" ] [ img [ src (urlPrefix ++ model.selectedUrl), class "image is-fullwidth" ] [] ]
+                ]
+            ]
         ]
-    , selectedUrl = "1.jpeg"
-    , chosenColor = Primary
-    }
-
-
-photoArray : Array Photo
-photoArray =
-    Array.fromList initialModel.photos
 
 
 viewThumbnailCols : ThumbnailColor -> String -> List Photo -> Html Msg
@@ -116,44 +80,102 @@ viewColorChooser color =
         ]
 
 
-view : Model -> Html Msg
-view model =
-    section [ class "section" ]
-        [ div [ class "content" ]
-            [ h1 [] [ text "Photo Groove" ]
-            , div [ class "columns" ]
-                [ div [ class "column" ]
-                    [ div [ class "field is-grouped" ]
-                        [ p [ class "control" ]
-                            [ a [ class "button is-primary", onClick ClickedSurpriseMe ] [ text "Surprise Me!" ] ]
-                        , div [ class "control" ] (List.map viewColorChooser [ Primary, Info, Danger ])
-                        ]
-                    ]
-                ]
-            , div [ class "columns" ]
-                [ div [ class "column" ] (model.photos |> ListE.greedyGroupsOf 2 |> List.map (viewThumbnailCols model.chosenColor model.selectedUrl))
-                , div [ class "column" ] [ img [ src (urlPrefix ++ model.selectedUrl), class "image is-fullwidth" ] [] ]
-                ]
-            ]
+type ThumbnailColor
+    = Primary
+    | Info
+    | Danger
+
+
+colorToString : ThumbnailColor -> String
+colorToString size =
+    case size of
+        Primary ->
+            "Primary"
+
+        Info ->
+            "Info"
+
+        Danger ->
+            "Danger"
+
+
+colorToClass : ThumbnailColor -> String
+colorToClass size =
+    case size of
+        Primary ->
+            "has-background-primary"
+
+        Info ->
+            "has-background-info"
+
+        Danger ->
+            "has-background-danger"
+
+
+type alias Photo =
+    { url : String }
+
+
+type alias Model =
+    { photos : List Photo
+    , selectedUrl : String
+    , chosenColor : ThumbnailColor
+    }
+
+
+initialModel : Model
+initialModel =
+    { photos =
+        [ { url = "1.jpeg" }
+        , { url = "2.jpeg" }
+        , { url = "3.jpeg" }
         ]
+    , selectedUrl = "1.jpeg"
+    , chosenColor = Primary
+    }
 
 
-update : Msg -> Model -> Model
+photoArray : Array Photo
+photoArray =
+    Array.fromList initialModel.photos
+
+
+getPhotoUrl : Int -> String
+getPhotoUrl index =
+    case Array.get index photoArray of
+        Just photo ->
+            photo.url
+
+        Nothing ->
+            ""
+
+
+randomPhotoPicker : Random.Generator Int
+randomPhotoPicker =
+    Random.int 0 (Array.length photoArray - 1)
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ClickedPhoto url ->
-            { model | selectedUrl = url }
+            ( { model | selectedUrl = url }, Cmd.none )
 
         ClickedColor color ->
-            { model | chosenColor = color }
+            ( { model | chosenColor = color }, Cmd.none )
 
         ClickedSurpriseMe ->
-            { model | selectedUrl = "2.jpeg" }
+            ( model, Random.generate GotSelectedIndex randomPhotoPicker )
+
+        GotSelectedIndex index ->
+            ( { model | selectedUrl = getPhotoUrl index }, Cmd.none )
 
 
+main : Program () Model Msg
 main =
-    Browser.sandbox
-        { init = initialModel
+    Browser.element
+        { init = \flags -> ( initialModel, Cmd.none )
         , view = view
         , update = update
+        , subscriptions = \model -> Sub.none
         }
