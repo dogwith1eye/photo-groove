@@ -1,11 +1,11 @@
-module Thumbnail where
+module Component.Thumbnail where
 
 import Prelude
 
-import Data (Message(..))
+import Component.Data (Message(..))
+import Component.Helpers (classList)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
-import Helpers (classList)
 import Reactix as R
 import Reactix.DOM.HTML as H
 import Reactix.React (Element)

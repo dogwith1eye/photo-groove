@@ -1,4 +1,4 @@
-module Data where
+module Component.Data where
 
 type Photo = { url :: String }
 

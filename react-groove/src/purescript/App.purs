@@ -2,21 +2,64 @@ module App where
 
 import Prelude
 
-import Data (Message(..), Photo)
 import Data.Array (length)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
-import Helpers (chunks)
+import Helpers (chunks, classList)
 import Reactix as R
 import Reactix.DOM.HTML as H
 import Reactix.React (Element)
-import Thumbnail (thumbnail)
 
 type Props = ()
 
+urlPrefix :: String
+urlPrefix = "http://elm-in-action.com/"
+
+data Msg
+  = None
+  | ClickedPhoto String
+
+view :: (Msg -> Effect Unit) -> Model -> Element
+view dispatch model =
+  H.section { className: "section" }
+    [ H.div { className: "content" }
+      [ H.h1 {} [ H.text "Photo Groove" ]
+      , H.div { className: "columns" }
+        [ H.div { className: "column" } (viewThumbnailCols dispatch model)
+        , H.div { className: "column" } [ H.img { className: "image is-fullwidth", src: urlPrefix <> model.selectedUrl } ]
+        ]
+      ]
+    ]
+
+viewThumbnailCols :: (Msg -> Effect Unit) -> Model -> Array Element
+viewThumbnailCols dispatch model = cols <$> (chunks 2 model.photos)
+  where
+  cols :: Array Photo -> Element
+  cols xs = H.div { className: "columns" }
+    (viewThumbnail dispatch (length xs == 1) model.selectedUrl <$> xs)
+
+viewThumbnail :: (Msg -> Effect Unit) -> Boolean -> String -> Photo -> Element
+viewThumbnail dispatch isHalf selectedUrl thumb =
+  H.div { className: classList [("column" /\ true), ("is-half" /\ isHalf), ("has-background-primary" /\ (selectedUrl == thumb.url)) ] }
+      [ H.figure { className: "image is-200by267 is-marginless" }
+        [ H.img { src: urlPrefix <> thumb.url, on: { click: \_ -> dispatch (ClickedPhoto thumb.url) } } ]
+      ]
+
+type Photo = { url :: String }
+
 type Model = { photos :: Array Photo, selectedUrl :: String }
 
-reducer :: Model -> Message -> Model
+initialModel :: Model
+initialModel =
+  { photos:
+    [ { url: "1.jpeg" }
+    , { url: "2.jpeg" }
+    , { url: "3.jpeg" }
+    ]
+  , selectedUrl: "1.jpeg"
+  }
+
+reducer :: Model -> Msg -> Model
 reducer model = case _ of
   None -> model
   ClickedPhoto url -> model { selectedUrl = url }
@@ -24,47 +67,9 @@ reducer model = case _ of
 app :: R.Component Props
 app = R.hooksComponent "App" cpt
   where
-  urlPrefix :: String
-  urlPrefix = "http://elm-in-action.com/"
-
-  initialModel :: Model
-  initialModel =
-    { photos:
-      [ { url: "1.jpeg" }
-      , { url: "2.jpeg" }
-      , { url: "3.jpeg" }
-      ]
-    , selectedUrl: "1.jpeg"
-    }
-
-  viewThumbnailCols :: (Message -> Effect Unit) -> Model -> Array Element
-  viewThumbnailCols reduceMsg model = cols <$> (chunks 2 model.photos)
-    where
-    cols :: Array Photo -> Element
-    cols xs = H.div { className: "columns" }
-      (viewThumbnail (length xs == 1) <$> xs)
-
-    viewThumbnail :: Boolean -> Photo -> Element
-    viewThumbnail isHalf thumb =
-      thumbnail
-        { urlPrefix: urlPrefix
-        , url: thumb.url
-        , selected: thumb.url == model.selectedUrl
-        , isHalf: isHalf
-        , reduceMsg: reduceMsg
-        }
-
   cpt {} _ = do
     model /\ dispatch <- R.useReducer' reducer initialModel
-    pure $ H.section { className: "section" }
-      [ H.div { className: "content" }
-        [ H.h1 {} [ H.text "Photo Groove" ]
-        , H.div { className: "columns" }
-          [ H.div { className: "column" } (viewThumbnailCols dispatch model)
-          , H.div { className: "column" } [ H.img { className: "image is-fullwidth", src: urlPrefix <> model.selectedUrl } ]
-          ]
-        ]
-      ]
+    pure $ view dispatch model
 
 mkApp :: Record Props -> Element
 mkApp props = R.createElement app props []
