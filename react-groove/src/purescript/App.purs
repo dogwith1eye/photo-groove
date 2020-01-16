@@ -17,6 +17,7 @@ urlPrefix = "http://elm-in-action.com/"
 
 data Msg
   = None
+  | ClickedColor ThumbnailColor
   | ClickedPhoto String
   | ClickedSurpriseMe
 
@@ -27,19 +28,21 @@ view dispatch model =
       [ H.h1 {} [ H.text "Photo Groove" ]
       , H.div { className: "columns" }
         [ H.div { className: "column" }
-          [ H.div { className: "field is-horizontal" }
+          [ H.div { className: "field is-horizontal is-pulled-left" }
               [ H.div { className: "field-label" }
                 [ H.label { className: "label" } [ H.text "Color:" ] ]
               , H.div { className: "field-body" }
-                [ H.div { className: "field" } [] ]
+                [ H.div { className: "field" }
+                  [ H.div { className: "control" } (viewColorChooser dispatch <$> [ Primary, Info, Danger ]) ]
+                ]
               ]
           ]
         , H.div { className: "column" }
-            [ H.div { className: "field" }
-                [ H.div { className: "control" }
-                    [ H.a { className: "button is-primary", on: { click: \_ -> dispatch ClickedSurpriseMe } } [ H.text "Surprise Me!" ] ]
-                ]
+          [ H.div { className: "field" }
+            [ H.div { className: "control" }
+              [ H.a { className: "button is-primary", on: { click: \_ -> dispatch ClickedSurpriseMe } } [ H.text "Surprise Me!" ] ]
             ]
+          ]
         ]
       , H.div { className: "columns" }
         [ H.div { className: "column" } (viewThumbnailCols dispatch model)
@@ -53,18 +56,44 @@ viewThumbnailCols dispatch model = cols <$> (chunks 2 model.photos)
   where
   cols :: Array Photo -> Element
   cols xs = H.div { className: "columns" }
-    (viewThumbnail dispatch (length xs == 1) model.selectedUrl <$> xs)
+    (viewThumbnail dispatch model.chosenColor (length xs == 1) model.selectedUrl <$> xs)
 
-viewThumbnail :: (Msg -> Effect Unit) -> Boolean -> String -> Photo -> Element
-viewThumbnail dispatch isHalf selectedUrl thumb =
-  H.div { className: classList [("column" /\ true), ("is-half" /\ isHalf), ("has-background-primary" /\ (selectedUrl == thumb.url)) ] }
+viewThumbnail :: (Msg -> Effect Unit) -> ThumbnailColor -> Boolean -> String -> Photo -> Element
+viewThumbnail dispatch chosenColor isHalf selectedUrl thumb =
+  H.div { className: classList [("column" /\ true), ("is-half" /\ isHalf), (colorClass /\ isSelected) ] }
       [ H.figure { className: "image is-200by267 is-marginless" }
         [ H.img { src: urlPrefix <> thumb.url, on: { click: \_ -> dispatch (ClickedPhoto thumb.url) } } ]
       ]
+  where
+    colorClass = colorToClass chosenColor
+    isSelected = selectedUrl == thumb.url
+
+viewColorChooser ::  (Msg -> Effect Unit) -> ThumbnailColor -> Element
+viewColorChooser dispatch color =
+    H.label { className: "radio" }
+      [ H.input { type: "radio", name: "color", on: { click: \_ -> dispatch (ClickedColor color) } }
+      , H.text ("\n" <> show color)
+      ]
+
+data ThumbnailColor
+    = Primary
+    | Info
+    | Danger
+
+instance showThumbnailColor :: Show ThumbnailColor where
+  show Primary = "Primary"
+  show Info = "Info"
+  show Danger = "Danger"
+
+colorToClass :: ThumbnailColor -> String
+colorToClass = case _ of
+  Primary -> "has-background-primary"
+  Info    -> "has-background-info"
+  Danger  -> "has-background-danger"
 
 type Photo = { url :: String }
 
-type Model = { photos :: Array Photo, selectedUrl :: String }
+type Model = { photos :: Array Photo, selectedUrl :: String, chosenColor :: ThumbnailColor }
 
 initialModel :: Model
 initialModel =
@@ -74,13 +103,15 @@ initialModel =
     , { url: "3.jpeg" }
     ]
   , selectedUrl: "1.jpeg"
+  , chosenColor: Primary
   }
 
 reducer :: Model -> Msg -> Model
 reducer model = case _ of
-  None -> model
-  ClickedPhoto url -> model { selectedUrl = url }
-  ClickedSurpriseMe -> model { selectedUrl = "2.jpeg" }
+  None               -> model
+  ClickedColor color -> model { chosenColor = color }
+  ClickedPhoto url   -> model { selectedUrl = url }
+  ClickedSurpriseMe  -> model { selectedUrl = "2.jpeg" }
 
 app :: R.Component Props
 app = R.hooksComponent "App" cpt

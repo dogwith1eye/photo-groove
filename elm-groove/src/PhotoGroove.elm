@@ -28,7 +28,7 @@ view model =
             [ h1 [] [ text "Photo Groove" ]
             , div [ class "columns" ]
                 [ div [ class "column" ]
-                    [ div [ class "field is-horizontal" ]
+                    [ div [ class "field is-horizontal is-pulled-left" ]
                         [ div [ class "field-label" ]
                             [ label [ class "label" ] [ text "Color:" ] ]
                         , div [ class "field-body" ]
