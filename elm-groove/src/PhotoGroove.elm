@@ -2,7 +2,7 @@ module PhotoGroove exposing (main)
 
 import Array exposing (Array)
 import Browser
-import Html exposing (Html, a, div, figure, h1, img, input, label, p, section, text)
+import Html exposing (Html, a, div, figure, h1, img, input, label, section, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import List.Extra as ListE
@@ -39,7 +39,7 @@ view model =
                     ]
                 , div [ class "column" ]
                     [ div [ class "field" ]
-                        [ p [ class "control" ]
+                        [ div [ class "control" ]
                             [ a [ class "button is-primary", onClick ClickedSurpriseMe ] [ text "Surprise Me!" ] ]
                         ]
                     ]

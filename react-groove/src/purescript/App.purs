@@ -18,12 +18,29 @@ urlPrefix = "http://elm-in-action.com/"
 data Msg
   = None
   | ClickedPhoto String
+  | ClickedSurpriseMe
 
 view :: (Msg -> Effect Unit) -> Model -> Element
 view dispatch model =
   H.section { className: "section" }
     [ H.div { className: "content" }
       [ H.h1 {} [ H.text "Photo Groove" ]
+      , H.div { className: "columns" }
+        [ H.div { className: "column" }
+          [ H.div { className: "field is-horizontal" }
+              [ H.div { className: "field-label" }
+                [ H.label { className: "label" } [ H.text "Color:" ] ]
+              , H.div { className: "field-body" }
+                [ H.div { className: "field" } [] ]
+              ]
+          ]
+        , H.div { className: "column" }
+            [ H.div { className: "field" }
+                [ H.div { className: "control" }
+                    [ H.a { className: "button is-primary", on: { click: \_ -> dispatch ClickedSurpriseMe } } [ H.text "Surprise Me!" ] ]
+                ]
+            ]
+        ]
       , H.div { className: "columns" }
         [ H.div { className: "column" } (viewThumbnailCols dispatch model)
         , H.div { className: "column" } [ H.img { className: "image is-fullwidth", src: urlPrefix <> model.selectedUrl } ]
@@ -63,6 +80,7 @@ reducer :: Model -> Msg -> Model
 reducer model = case _ of
   None -> model
   ClickedPhoto url -> model { selectedUrl = url }
+  ClickedSurpriseMe -> model { selectedUrl = "2.jpeg" }
 
 app :: R.Component Props
 app = R.hooksComponent "App" cpt
