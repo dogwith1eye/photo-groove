@@ -28,10 +28,19 @@ view model =
             [ h1 [] [ text "Photo Groove" ]
             , div [ class "columns" ]
                 [ div [ class "column" ]
-                    [ div [ class "field is-grouped" ]
+                    [ div [ class "field is-horizontal" ]
+                        [ div [ class "field-label" ]
+                            [ label [ class "label" ] [ text "Color:" ] ]
+                        , div [ class "field-body" ]
+                            [ div [ class "field" ]
+                                [ div [ class "control" ] (List.map viewColorChooser [ Primary, Info, Danger ]) ]
+                            ]
+                        ]
+                    ]
+                , div [ class "column" ]
+                    [ div [ class "field" ]
                         [ p [ class "control" ]
                             [ a [ class "button is-primary", onClick ClickedSurpriseMe ] [ text "Surprise Me!" ] ]
-                        , div [ class "control" ] (List.map viewColorChooser [ Primary, Info, Danger ])
                         ]
                     ]
                 ]
@@ -65,7 +74,7 @@ viewThumbnailCols color selectedUrl thumbs =
 
 viewThumbnail : Photo -> Html Msg
 viewThumbnail thumb =
-    figure [ class "image" ]
+    figure [ class "image is-200by267 is-marginless" ]
         [ img
             [ src (urlPrefix ++ thumb.url), onClick (ClickedPhoto thumb.url) ]
             []
@@ -76,7 +85,7 @@ viewColorChooser : ThumbnailColor -> Html Msg
 viewColorChooser color =
     label [ class "radio" ]
         [ input [ type_ "radio", name "color", onClick (ClickedColor color) ] []
-        , text (colorToString color)
+        , text ("\n" ++ colorToString color)
         ]
 
 

@@ -5696,6 +5696,7 @@ var $elm_community$list_extra$List$Extra$greedyGroupsOf = F2(
 	});
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5738,7 +5739,6 @@ var $author$project$PhotoGroove$colorToString = function (size) {
 	}
 };
 var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $author$project$PhotoGroove$viewColorChooser = function (color) {
@@ -5761,7 +5761,7 @@ var $author$project$PhotoGroove$viewColorChooser = function (color) {
 					]),
 				_List_Nil),
 				$elm$html$Html$text(
-				$author$project$PhotoGroove$colorToString(color))
+				'\n' + $author$project$PhotoGroove$colorToString(color))
 			]));
 };
 var $elm$core$List$filter = F2(
@@ -5808,7 +5808,7 @@ var $author$project$PhotoGroove$viewThumbnail = function (thumb) {
 		$elm$html$Html$figure,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('image')
+				$elm$html$Html$Attributes$class('image is-200by267 is-marginless')
 			]),
 		_List_fromArray(
 			[
@@ -5901,7 +5901,73 @@ var $author$project$PhotoGroove$view = function (model) {
 										$elm$html$Html$div,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$class('field is-grouped')
+												$elm$html$Html$Attributes$class('field is-horizontal')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('field-label')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$label,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('label')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Color:')
+															]))
+													])),
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('field-body')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('field')
+															]),
+														_List_fromArray(
+															[
+																A2(
+																$elm$html$Html$div,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$class('control')
+																	]),
+																A2(
+																	$elm$core$List$map,
+																	$author$project$PhotoGroove$viewColorChooser,
+																	_List_fromArray(
+																		[$author$project$PhotoGroove$Primary, $author$project$PhotoGroove$Info, $author$project$PhotoGroove$Danger])))
+															]))
+													]))
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('column')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('field')
 											]),
 										_List_fromArray(
 											[
@@ -5924,18 +5990,7 @@ var $author$project$PhotoGroove$view = function (model) {
 															[
 																$elm$html$Html$text('Surprise Me!')
 															]))
-													])),
-												A2(
-												$elm$html$Html$div,
-												_List_fromArray(
-													[
-														$elm$html$Html$Attributes$class('control')
-													]),
-												A2(
-													$elm$core$List$map,
-													$author$project$PhotoGroove$viewColorChooser,
-													_List_fromArray(
-														[$author$project$PhotoGroove$Primary, $author$project$PhotoGroove$Info, $author$project$PhotoGroove$Danger])))
+													]))
 											]))
 									]))
 							])),
