@@ -6,6 +6,7 @@ import Data.Array as Array
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
+--import Effect.Console (log, logShow)
 import Effect.Random (randomInt)
 import Helpers (chunks, classList)
 import Reactix as R
@@ -121,7 +122,7 @@ reducer model = case _ of
   None                   -> model
   ClickedColor color     -> model { chosenColor = color }
   ClickedPhoto url       -> model { selectedUrl = url }
-  ClickedSurpriseMe      -> model { selectedUrl = "" }
+  ClickedSurpriseMe      -> model { surpriseMe = not model.surpriseMe }
   GotSelectedIndex index -> model { selectedUrl = getPhotoUrl index }
 
 app :: R.Component Props
@@ -129,7 +130,7 @@ app = R.hooksComponent "App" cpt
   where
   cpt {} _ = do
     model /\ dispatch <- R.useReducer' reducer initialModel
-    R.useEffect1' model.selectedUrl $ do
+    R.useEffect1' model.surpriseMe $ do
       index <- randomInt 0 (Array.length initialModel.photos - 1)
       dispatch (GotSelectedIndex index)
     pure $ view dispatch model
