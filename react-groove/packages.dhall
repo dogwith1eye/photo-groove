@@ -134,6 +134,7 @@ let additions =
           , "nullable"
           , "prelude"
           , "random"
+          , "refs"
           , "unsafe-coerce"
           ]
         , repo =
