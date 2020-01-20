@@ -2,9 +2,11 @@ module App where
 
 import Prelude
 
-import Data.Array (length)
+import Data.Array as Array
+import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
+import Effect.Random (randomInt)
 import Helpers (chunks, classList)
 import Reactix as R
 import Reactix.DOM.HTML as H
@@ -20,6 +22,7 @@ data Msg
   | ClickedColor ThumbnailColor
   | ClickedPhoto String
   | ClickedSurpriseMe
+  | GotSelectedIndex Int
 
 view :: (Msg -> Effect Unit) -> Model -> Element
 view dispatch model =
@@ -56,7 +59,7 @@ viewThumbnailCols dispatch model = cols <$> (chunks 2 model.photos)
   where
   cols :: Array Photo -> Element
   cols xs = H.div { className: "columns" }
-    (viewThumbnail dispatch model.chosenColor (length xs == 1) model.selectedUrl <$> xs)
+    (viewThumbnail dispatch model.chosenColor (Array.length xs == 1) model.selectedUrl <$> xs)
 
 viewThumbnail :: (Msg -> Effect Unit) -> ThumbnailColor -> Boolean -> String -> Photo -> Element
 viewThumbnail dispatch chosenColor isHalf selectedUrl thumb =
@@ -93,7 +96,7 @@ colorToClass = case _ of
 
 type Photo = { url :: String }
 
-type Model = { photos :: Array Photo, selectedUrl :: String, chosenColor :: ThumbnailColor }
+type Model = { photos :: Array Photo, selectedUrl :: String, chosenColor :: ThumbnailColor, surpriseMe :: Boolean }
 
 initialModel :: Model
 initialModel =
@@ -104,20 +107,31 @@ initialModel =
     ]
   , selectedUrl: "1.jpeg"
   , chosenColor: Primary
+  , surpriseMe: false
   }
+
+getPhotoUrl :: Int -> String
+getPhotoUrl index =
+  case Array.index initialModel.photos index of
+    Just photo -> photo.url
+    Nothing -> ""
 
 reducer :: Model -> Msg -> Model
 reducer model = case _ of
-  None               -> model
-  ClickedColor color -> model { chosenColor = color }
-  ClickedPhoto url   -> model { selectedUrl = url }
-  ClickedSurpriseMe  -> model { selectedUrl = "2.jpeg" }
+  None                   -> model
+  ClickedColor color     -> model { chosenColor = color }
+  ClickedPhoto url       -> model { selectedUrl = url }
+  ClickedSurpriseMe      -> model { selectedUrl = "" }
+  GotSelectedIndex index -> model { selectedUrl = getPhotoUrl index }
 
 app :: R.Component Props
 app = R.hooksComponent "App" cpt
   where
   cpt {} _ = do
     model /\ dispatch <- R.useReducer' reducer initialModel
+    R.useEffect1' model.selectedUrl $ do
+      index <- randomInt 0 (Array.length initialModel.photos - 1)
+      dispatch (GotSelectedIndex index)
     pure $ view dispatch model
 
 mkApp :: Record Props -> Element

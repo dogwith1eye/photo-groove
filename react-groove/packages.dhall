@@ -133,11 +133,12 @@ let additions =
           , "functions"
           , "nullable"
           , "prelude"
+          , "random"
           , "unsafe-coerce"
           ]
-        , repo = 
+        , repo =
             "https://github.com/irresponsible/purescript-dom-simple"
-        , version = 
+        , version =
           "v0.2.4"
       }
     , ffi-simple =
@@ -149,7 +150,7 @@ let additions =
           , "nullable"
           , "unsafe-coerce"
           ]
-        , repo = 
+        , repo =
           "https://github.com/irresponsible/purescript-ffi-simple"
         , version = "v0.2.4"
       }
@@ -167,7 +168,7 @@ let additions =
           , "refs"
           , "spec"
           , "spec-mocha"
-          , "unsafe-coerce" 
+          , "unsafe-coerce"
           ]
       , repo =
           "https://github.com/poorscript/purescript-reactix.git"
@@ -183,7 +184,7 @@ let additions =
           ]
       , repo =
           "https://github.com/purescript-spec/purescript-spec-mocha"
-      , version = 
+      , version =
           "v4.0.0"
       }
   }
