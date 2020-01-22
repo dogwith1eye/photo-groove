@@ -4,10 +4,11 @@ import Prelude
 
 import Data.Array as Array
 import Data.Maybe (Maybe(..))
+import Data.Tuple(Tuple)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 --import Effect.Console (log, logShow)
---import Effect.Random (randomInt)
+import Effect.Random (randomInt)
 import Helpers (chunks, classList)
 import Reactix as R
 import Reactix.DOM.HTML as H
@@ -117,15 +118,17 @@ getPhotoUrl index =
     Just photo -> photo.url
     Nothing -> ""
 
-reducer :: forall a. Model -> Msg -> (UpdateMsg Model a)
+surpriseMe :: Tuple Model (Msg -> Effect Unit) -> Effect Unit
+surpriseMe (state /\ dispatch) = do
+    index <- randomInt 0 (Array.length initialModel.photos - 1)
+    dispatch (GotSelectedIndex index)
+
+reducer :: Model -> Msg -> (UpdateMsg Model Msg)
 reducer model = case _ of
   None                   -> Update(model)
   ClickedColor color     -> Update(model { chosenColor = color })
   ClickedPhoto url       -> Update(model { selectedUrl = url })
-  ClickedSurpriseMe      -> Update(model)
-  -- ClickedSurpriseMe      -> SideEffect(\_ -> do
-  --   index <- randomInt 0 (Array.length initialModel.photos - 1)
-  --   dispatch (GotSelectedIndex index))
+  ClickedSurpriseMe      -> SideEffect(surpriseMe)
   GotSelectedIndex index -> Update(model { selectedUrl = getPhotoUrl index })
 
 app :: R.Component Props
@@ -133,9 +136,6 @@ app = R.hooksComponent "App" cpt
   where
   cpt {} _ = do
     model /\ dispatch <- useReducer' reducer initialModel
-    -- R.useEffect1 model.surpriseMe $ do
-    --   index <- randomInt 0 (Array.length initialModel.photos - 1)
-    --   dispatch (GotSelectedIndex index)
     pure $ view dispatch model
 
 mkApp :: Record Props -> Element

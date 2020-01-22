@@ -2,16 +2,17 @@ module ReactUpdate where
 
 import Prelude
 import Data.Array as Array
+import Data.Tuple(Tuple)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Reactix as R
 
-type UpdateModel state action = { state :: state, sideEffects :: Array (action -> Effect Unit) }
+type UpdateModel state action = { state :: state, sideEffects :: Array (Tuple state (action -> Effect Unit) -> Effect Unit) }
 
 data UpdateMsg state action
   = NoUpdate
   | Update state
-  | SideEffect (action -> Effect Unit)
+  | SideEffect (Tuple state (action -> Effect Unit) -> Effect Unit)
 
 reducer :: forall s a. ((s -> a -> (UpdateMsg s a))) -> (UpdateModel s a) -> a -> (UpdateModel s a)
 reducer r model msg = case (r model.state msg) of
