@@ -23,8 +23,8 @@ reducer r model msg = case (r model.state msg) of
 
 useReducer' :: forall s a. (s -> a -> (UpdateMsg s a)) -> s -> R.Hooks (R.Reducer s a)
 useReducer' r s = do
-  updModel /\ dispatch <- R.useReducer' (reducer r) { state: s, sideEffect: (\x -> \y -> pure $ unit) }
-  R.useEffect1' updModel.sideEffect $ do
-    results <- updModel.sideEffect unit (updModel.state /\ dispatch)
+  model /\ dispatch <- R.useReducer' (reducer r) { state: s, sideEffect: (\x -> \y -> pure $ unit) }
+  R.useEffect1' model.sideEffect $ do
+    results <- model.sideEffect unit (model.state /\ dispatch)
     pure $ unit
-  pure $ (updModel.state /\ dispatch)
+  pure $ (model.state /\ dispatch)
