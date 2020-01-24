@@ -133,8 +133,6 @@ let additions =
           , "functions"
           , "nullable"
           , "prelude"
-          , "random"
-          , "refs"
           , "unsafe-coerce"
           ]
         , repo =
