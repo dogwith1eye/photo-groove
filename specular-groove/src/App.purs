@@ -5,18 +5,14 @@ import Prelude hiding (append)
 
 import Effect (Effect)
 -- import Specular.Dom.Builder.Class (dynText, el, el_)
--- import Specular.Dom.Element(attr, attrs, class_, classes, text)
-import Specular.Dom.Element(text)
+import Specular.Dom.Element(attr, attrs, class_, classes, el, el_, text)
 --import Specular.Dom.Element.Class(el)
--- import Specular.Dom.Node.Class ((:=))
+import Specular.Dom.Node.Class ((:=))
 import Specular.Dom.Widget (liftWidget, class MonadWidget, RWidget, Widget, runMainWidgetInBody)
 -- import Specular.Dom.Widgets.Button (buttonOnClick)
 -- import Specular.FRP (class MonadFRP, Dynamic, Event, foldDyn, leftmost)
 -- import Specular.FRP.Fix (fixFRP)
 -- import Specular.FRP.WeakDynamic (WeakDynamic)
-
-main :: Effect Unit
-main = runMainWidgetInBody mainWidget
 
 type Photo = { url :: String }
 
@@ -44,7 +40,6 @@ initialModel =
   , surpriseMe: false
   }
 
---mainWidget :: forall m. MonadWidget m => m Unit
 mainWidget :: Widget Unit
 mainWidget = text "huh"
 
@@ -54,21 +49,34 @@ mainWidget1 = text "huh"
 mainWidget2 :: forall m. MonadWidget m => m Unit
 mainWidget2 = liftWidget $ text "huh"
 
--- view :: forall m. MonadWidget m
---   => { }
---   -> m { }
--- view {} = do
---   el "div" [classes ["alert", "alert-warning", "alert-dismissible", "fade", "show"], attr "role" "alert"] do
---     el_ "Holy guacamole!"
---     text " You should check in on some of those fields below."
+testWidget :: forall m. MonadWidget m => m Unit
+testWidget = liftWidget $
+  el "div" [classes ["alert", "alert-warning", "alert-dismissible", "fade", "show"], attr "role" "alert"] do
+  el_ "strong" $ text "Holy guacamole!"
+  text " You should check in on some of those fields below."
+  el "button" [class_ "close", attrs ("type":="button" <> "data-dismiss":="alert" <> "aria-label":="Close")] do
+    el "span" [attr "aria-hidden"  "true"] do
+      text "×"
 
---   pure { }
+view :: forall m. MonadWidget m => m Unit
+view = liftWidget $
+  el "section" [class_ "section"] do
+    el "div" [class_ "content"] do
+      el_ "h1" $ text "Photo Groove"
+      el "div" [class_ "columns"] do
+        el "div" [class_ "column"] do
+          el "div" [classes ["field", "is-horizontal", "is-pulled-left"]] do
+            el "div" [class_ "field-label"] do
+              el "label" [class_ "label"] $ text "Color:"
+            el "div" [class_ "field-body"] do
+              el "div" [class_ "field"] do
+                el "div" [class_ "control"] $ text "viewColorChooser"
+        el "div" [class_ "column"] do
+          el "div" [class_ "field"] do
+            el "div" [class_ "control"] $ text "Surprise Me!"
+      el "div" [class_ "columns"] do
+        el "div" [class_ "column"] $ text "photos"
+        el "div" [class_ "column"] $ text "selected"
 
--- control :: forall m. MonadFRP m
---   => {}
---   -> m (Tuple
---     { }
---     Unit
---     )
--- control {} = do
---   pure (Tuple {} unit)
+main :: Effect Unit
+main = runMainWidgetInBody view
