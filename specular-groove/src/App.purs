@@ -3,16 +3,14 @@ module App where
 import Prelude hiding (append)
 
 
+import Data.Foldable (for_)
 import Effect (Effect)
--- import Specular.Dom.Builder.Class (dynText, el, el_)
-import Specular.Dom.Element(attr, attrs, class_, classes, el, el_, text)
---import Specular.Dom.Element.Class(el)
+import Specular.Dom.Element (attr, attrs, class_, classes, el, el_, text)
 import Specular.Dom.Node.Class ((:=))
 import Specular.Dom.Widget (liftWidget, class MonadWidget, RWidget, Widget, runMainWidgetInBody)
--- import Specular.Dom.Widgets.Button (buttonOnClick)
--- import Specular.FRP (class MonadFRP, Dynamic, Event, foldDyn, leftmost)
--- import Specular.FRP.Fix (fixFRP)
--- import Specular.FRP.WeakDynamic (WeakDynamic)
+
+urlPrefix :: String
+urlPrefix = "http://elm-in-action.com/"
 
 type Photo = { url :: String }
 
@@ -58,8 +56,8 @@ testWidget = liftWidget $
     el "span" [attr "aria-hidden"  "true"] do
       text "×"
 
-view :: forall m. MonadWidget m => m Unit
-view = liftWidget $
+view :: forall m. MonadWidget m => Model -> m Unit
+view model = liftWidget $
   el "section" [class_ "section"] do
     el "div" [class_ "content"] do
       el_ "h1" $ text "Photo Groove"
@@ -75,8 +73,16 @@ view = liftWidget $
           el "div" [class_ "field"] do
             el "div" [class_ "control"] $ text "Surprise Me!"
       el "div" [class_ "columns"] do
-        el "div" [class_ "column"] $ text "photos"
+        el "div" [class_ "column"] do
+          for_ model.photos $ viewThumbnail
         el "div" [class_ "column"] $ text "selected"
 
+--viewThumbnail :: forall r. Photo -> RWidget r Unit
+viewThumbnail :: Photo -> Widget Unit
+viewThumbnail  thumb =
+  el "div" [class_ "column"] do
+    el "div" [classes ["image", "is-200by267", "is-marginless"]] do
+      el "img" [attrs ("src":=(urlPrefix <> thumb.url))] $ text ""
+
 main :: Effect Unit
-main = runMainWidgetInBody view
+main = runMainWidgetInBody (view initialModel)
