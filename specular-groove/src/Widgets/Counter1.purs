@@ -24,6 +24,12 @@ view {value} = do
 
   increment <- buttonOnClick (pure $ "class" := "increment") $ text "Increment"
 
+  huh <- foldDyn ($) 0 $ (_ + 1) <$ increment
+
+  evClick <- buttonOnClick (pure mempty) $ text "Click Me!"
+
+  wuh <- foldDyn ($) 0 $ (_ - 1) <$ evClick
+
   pure { increment: (const 5) <$> increment }
 
 control :: forall m. MonadFRP m
@@ -34,8 +40,5 @@ control :: forall m. MonadFRP m
     Unit
     )
 control {increment} = do
-  value <- foldDyn ($) 0 $
-    leftmost
-      [ (_ + 1) <$ increment
-      ]
+  value <- foldDyn ($) 0 $ (_ + 1) <$ increment
   pure (Tuple {value} unit)

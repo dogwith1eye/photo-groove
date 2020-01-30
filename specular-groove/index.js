@@ -1,4 +1,4 @@
-var Main = require("./output/App");
+var Main = require("./output/Widgets.Visible");
 
 function main() {
   /*
