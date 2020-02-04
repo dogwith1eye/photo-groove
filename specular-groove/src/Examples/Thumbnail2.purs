@@ -11,7 +11,7 @@ import Specular.Dom.Widget (class MonadWidget, liftWidget, runMainWidgetInBody)
 import Specular.FRP (Event, foldDyn, leftmost)
 import Specular.FRP.Fix (fixFRP, fixFRP_)
 import Specular.FRP.WeakDynamic (WeakDynamic)
-import Examples.Img (imgOnClick)
+import Widget.Img (imgOnClick)
 
 main :: Effect Unit
 main = runMainWidgetInBody mainWidget2

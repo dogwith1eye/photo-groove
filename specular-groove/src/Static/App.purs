@@ -2,7 +2,6 @@ module Static.App where
 
 import Prelude hiding (append)
 
-
 import Data.Foldable (for_)
 import Effect (Effect)
 import Specular.Dom.Element (attr, attrs, class_, classes, el, el_, text)

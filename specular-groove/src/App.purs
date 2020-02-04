@@ -2,12 +2,17 @@ module App where
 
 import Prelude hiding (append)
 
-
 import Data.Foldable (for_)
+import Data.Traversable(traverse)
 import Effect (Effect)
-import Specular.Dom.Element (attr, attrs, class_, classes, el, el_, text)
+import Foreign.Object (Object)
+import Specular.Dom.Builder.Class (el, elAttr, elDynAttr, text)
 import Specular.Dom.Node.Class ((:=))
-import Specular.Dom.Widget (liftWidget, class MonadWidget, RWidget, Widget, runMainWidgetInBody)
+import Specular.Dom.Widget (class MonadWidget, liftWidget, runMainWidgetInBody)
+import Specular.FRP (Event, foldDyn, leftmost)
+import Specular.FRP.Fix (fixFRP_)
+import Specular.FRP.WeakDynamic (WeakDynamic)
+import Widget.Img (imgOnClick)
 
 urlPrefix :: String
 urlPrefix = "http://elm-in-action.com/"
@@ -38,51 +43,41 @@ initialModel =
   , surpriseMe: false
   }
 
-mainWidget :: Widget Unit
-mainWidget = text "huh"
-
-mainWidget1 :: forall r. RWidget r Unit
-mainWidget1 = text "huh"
-
-mainWidget2 :: forall m. MonadWidget m => m Unit
-mainWidget2 = liftWidget $ text "huh"
-
-testWidget :: forall m. MonadWidget m => m Unit
-testWidget = liftWidget $
-  el "div" [classes ["alert", "alert-warning", "alert-dismissible", "fade", "show"], attr "role" "alert"] do
-  el_ "strong" $ text "Holy guacamole!"
-  text " You should check in on some of those fields below."
-  el "button" [class_ "close", attrs ("type":="button" <> "data-dismiss":="alert" <> "aria-label":="Close")] do
-    el "span" [attr "aria-hidden"  "true"] do
-      text "×"
-
 view :: forall m. MonadWidget m => Model -> m Unit
-view model = liftWidget $
-  el "section" [class_ "section"] do
-    el "div" [class_ "content"] do
-      el_ "h1" $ text "Photo Groove"
-      el "div" [class_ "columns"] do
-        el "div" [class_ "column"] do
-          el "div" [classes ["field", "is-horizontal", "is-pulled-left"]] do
-            el "div" [class_ "field-label"] do
-              el "label" [class_ "label"] $ text "Color:"
-            el "div" [class_ "field-body"] do
-              el "div" [class_ "field"] do
-                el "div" [class_ "control"] $ text "viewColorChooser"
-        el "div" [class_ "column"] do
-          el "div" [class_ "field"] do
-            el "div" [class_ "control"] $ text "Surprise Me!"
-      el "div" [class_ "columns"] do
-        el "div" [class_ "column"] do
-          for_ model.photos $ viewThumbnail
-        el "div" [class_ "column"] $ text "selected"
+view model = fixFRP_ $ \selId -> do
+  newId <- elAttr "section" ("class":="section") do
+    elAttr "div" ("class":="content") do
+      el "h1" $ text "Photo Groove"
+      elAttr "div" ("class":="columns") do
+        elAttr "div" ("class":="column") do
+          elAttr "div" ("class":="field is-horizontal is-pulled-left") do
+            elAttr "div" ("class":="field-label") do
+              elAttr "label" ("class":="label") $ text "Color:"
+            elAttr "div" ("class":="field-body") do
+              elAttr "div" ("class":="field") do
+                elAttr "div" ("class":="control") $ text "viewColorChooser"
+        elAttr "div" ("class":="column") do
+          elAttr "div" ("class":="field") do
+            elAttr "div" ("class":="control") $ text "Surprise Me!"
+      elAttr "div" ("class":="columns") do
+        t1Id <- elAttr "div" ("class":="column") do
+          evs <- traverse (thumbnail selId) model.photos
+          foldDyn ($) model.selectedUrl $ const <$> leftmost evs
+        elAttr "div" ("class":="column") $ text "selected"
+        pure t1Id
+  pure newId
 
---viewThumbnail :: forall r. Photo -> RWidget r Unit
-viewThumbnail :: Photo -> Widget Unit
-viewThumbnail  thumb =
-  el "div" [class_ "column"] do
-    el "div" [classes ["image", "is-200by267", "is-marginless"]] do
-      el "img" [attrs ("src":=(urlPrefix <> thumb.url))] $ text ""
+thumbnail :: forall m. MonadWidget m => WeakDynamic String -> Photo -> m (Event String)
+thumbnail selId thumb = liftWidget $ do
+  ev <- elDynAttr "div" dynAttr do
+    elAttr "div" ("class":="image is-200by267 is-marginless") do
+      imgOnClick (pure $ "src":=(urlPrefix <> thumb.url))
+  pure $ thumb.url <$ ev
+  where
+    dynAttr :: WeakDynamic (Object String)
+    dynAttr = flip map selId $ (\x -> case (x /= thumb.url) of
+      true -> ("class" := "column")
+      false -> ("class" := "column has-background-primary"))
 
 main :: Effect Unit
 main = runMainWidgetInBody (view initialModel)

@@ -1,5 +1,5 @@
-module Examples.Img (
-    imgOnClick
+module Widget.Img (
+  imgOnClick
 ) where
 
 import Prelude

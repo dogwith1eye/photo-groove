@@ -1,4 +1,4 @@
-var Main = require("./output/Examples.Thumbnail1");
+var Main = require("./output/App");
 
 function main() {
   /*
