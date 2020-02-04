@@ -1,4 +1,4 @@
-module Widgets.Thumbnail where
+module Examples.Thumbnail where
 
 import Prelude hiding (append)
 
@@ -11,7 +11,7 @@ import Specular.Dom.Widget (class MonadWidget, liftWidget, runMainWidgetInBody)
 import Specular.FRP (class MonadFRP, Dynamic, Event, foldDyn)
 import Specular.FRP.Fix (fixFRP)
 import Specular.FRP.WeakDynamic (WeakDynamic)
-import Widgets.Img (imgOnClick)
+import Examples.Img (imgOnClick)
 
 main :: Effect Unit
 main = runMainWidgetInBody mainWidget

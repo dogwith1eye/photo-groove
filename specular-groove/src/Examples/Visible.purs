@@ -1,4 +1,4 @@
-module Widgets.Visible where
+module Examples.Visible where
 
 import Prelude hiding (append)
 

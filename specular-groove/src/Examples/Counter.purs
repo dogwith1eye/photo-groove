@@ -1,4 +1,4 @@
-module Widgets.Counter1 (mainWidget) where
+module Examples.Counter (mainWidget) where
 
 import Prelude hiding (append)
 
@@ -17,28 +17,29 @@ mainWidget = fixFRP $ view >=> control
 view :: forall m. MonadWidget m
   => { value :: WeakDynamic Int }
   -> m
-    { increment :: Event Int
+    { increment :: Event Unit
+    , decrement :: Event Unit
     }
 view {value} = do
   el "p" $ dynText (show <$> value)
 
   increment <- buttonOnClick (pure $ "class" := "increment") $ text "Increment"
+  decrement <- buttonOnClick (pure $ "class" := "decrement") $ text "Decrement"
 
-  huh <- foldDyn ($) 0 $ (_ + 1) <$ increment
-
-  evClick <- buttonOnClick (pure mempty) $ text "Click Me!"
-
-  wuh <- foldDyn ($) 0 $ (_ - 1) <$ evClick
-
-  pure { increment: (const 5) <$> increment }
+  pure { increment, decrement }
 
 control :: forall m. MonadFRP m
-  => { increment :: Event Int
+  => { increment :: Event Unit
+     , decrement :: Event Unit
      }
   -> m (Tuple
     { value :: Dynamic Int }
     Unit
     )
-control {increment} = do
-  value <- foldDyn ($) 0 $ (_ + 1) <$ increment
+control {increment,decrement} = do
+  value <- foldDyn ($) 0 $
+    leftmost
+      [ (_ + 1) <$ increment
+      , (_ - 1) <$ decrement
+      ]
   pure (Tuple {value} unit)

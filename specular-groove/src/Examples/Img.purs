@@ -1,4 +1,4 @@
-module Widgets.Img (
+module Examples.Img (
     imgOnClick
 ) where
 

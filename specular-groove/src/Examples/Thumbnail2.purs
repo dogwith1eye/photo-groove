@@ -1,4 +1,4 @@
-module Widgets.Thumbnail2 where
+module Examples.Thumbnail2 where
 
 import Prelude hiding (append)
 
@@ -11,7 +11,7 @@ import Specular.Dom.Widget (class MonadWidget, liftWidget, runMainWidgetInBody)
 import Specular.FRP (Event, foldDyn, leftmost)
 import Specular.FRP.Fix (fixFRP, fixFRP_)
 import Specular.FRP.WeakDynamic (WeakDynamic)
-import Widgets.Img (imgOnClick)
+import Examples.Img (imgOnClick)
 
 main :: Effect Unit
 main = runMainWidgetInBody mainWidget2
@@ -25,7 +25,7 @@ mainWidget = fixFRP $ \selId -> do
       thumbnail "2.jpeg" selId
     pure { evImg1, evImg2 }
   newId <- foldDyn ($) "1.jpeg" $ const <$> leftmost [huh.evImg1, huh.evImg2]
-  pure (Tuple newId unit) 
+  pure (Tuple newId unit)
 
 mainWidget1 :: forall m. MonadWidget m => m Unit
 mainWidget1 = fixFRP $ \selId -> do

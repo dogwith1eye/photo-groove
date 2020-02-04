@@ -1,4 +1,4 @@
-module Widgets.VisibleFix where
+module Examples.VisibleFix where
 
 import Prelude hiding (append)
 
