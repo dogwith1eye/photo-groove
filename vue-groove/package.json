@@ -1,0 +1,23 @@
+{
+  "name": "vue-groove",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "spago build",
+    "serve": "parcel index.html",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "spago build --watch"
+  },
+  "author": "",
+  "dependencies": {
+    "vue": "^3.0.0-alpha.4"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^1.12.4"
+  }
+}
