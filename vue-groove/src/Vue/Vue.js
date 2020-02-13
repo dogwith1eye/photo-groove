@@ -1,3 +1,2 @@
 "use strict";
-var Vue = require("vue");
-exports.vue = vue;
+exports.vue = require("vue");

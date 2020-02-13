@@ -1,5 +1,6 @@
 //var Main = require("./output/Main");
 import { h, createApp } from "@vue/runtime-dom";
+import { mkAppChild as App } from "./output/App";
 
 function main() {
   /*
@@ -25,7 +26,7 @@ function main() {
     }
   };
 
-  createApp(RootComponent).mount("#app");
+  createApp(App).mount("#app");
 }
 
 // HMR setup. For more info see: https://parceljs.org/hmr.html
