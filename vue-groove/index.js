@@ -1,6 +1,6 @@
 //var Main = require("./output/Main");
 import { h, createApp } from "@vue/runtime-dom";
-import { mkAppChild as App } from "./output/App";
+import { mkApp as App } from "./output/App";
 
 function main() {
   /*
@@ -32,6 +32,14 @@ function main() {
     }
   };
 
+  const ContainerComponentF = (props, ctx) => {
+    return h("div", { class: "container" }, [h("div", "f hello world")]);
+  };
+
+  const AppComponentF = (props, ctx) => {
+    return h(ContainerComponentF, () => []);
+  };
+
   const ContainerComponentSlot = {
     render() {
       return h("div", { class: "container" }, [this.$slots.default()]);
@@ -42,6 +50,14 @@ function main() {
     render() {
       return h(ContainerComponentSlot, [h("div", "hello slot")]);
     }
+  };
+
+  const ContainerComponentSlotF = (props, ctx) => {
+    return h("div", { class: "container" }, [ctx.slots.default()]);
+  };
+
+  const AppComponentSlotF = (props, ctx) => {
+    return h(ContainerComponentSlotF, [h("div", "f hello slot")]);
   };
 
   const ContainerComponentSlotText = {
@@ -56,6 +72,16 @@ function main() {
     render() {
       return h(ContainerComponentSlotText, props => [h("div", props.text)]);
     }
+  };
+
+  const ContainerComponentSlotTextF = (props, ctx) => {
+    return h("div", { class: "container" }, [
+      ctx.slots.default({ text: "f hello slot text" })
+    ]);
+  };
+
+  const AppComponentSlotTextF = (props, ctx) => {
+    return h(ContainerComponentSlotTextF, sprops => [h("div", sprops.text)]);
   };
 
   const ContainerComponentSlotTextFoo = {
@@ -74,7 +100,19 @@ function main() {
     }
   };
 
-  createApp(AppComponentSlotTextFoo).mount("#app");
+  const ContainerComponentSlotTextFooF = (props, ctx) => {
+    return h("div", { class: "container" }, [
+      ctx.slots.foo({ text: "f hello slot text foo" })
+    ]);
+  };
+
+  const AppComponentSlotTextFooF = (props, ctx) => {
+    return h(ContainerComponentSlotTextFooF, null, {
+      foo: fooProps => [h("div", fooProps.text)]
+    });
+  };
+
+  createApp(AppComponentSlotTextFooF).mount("#app");
 }
 
 // HMR setup. For more info see: https://parceljs.org/hmr.html

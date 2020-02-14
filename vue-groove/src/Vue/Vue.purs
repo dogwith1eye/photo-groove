@@ -8,9 +8,10 @@ where
 
 import Prelude
 
+import Data.Function.Uncurried(runFn2, runFn3)
 import Effect (Effect)
 import Effect.Uncurried (EffectFn1, mkEffectFn1)
-import FFI.Simple (args2, defineProperty, (..), (...))
+import FFI.Simple (applyTo, args2, defineProperty, (..), (...))
 import FFI.Simple.PseudoArray as PA
 
 foreign import data Vue :: Type
