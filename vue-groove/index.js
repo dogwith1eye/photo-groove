@@ -20,13 +20,61 @@ function main() {
   */
 
   //Main.main();
-  const RootComponent = {
+  const ContainerComponent = {
     render() {
-      return h("div", "hello world");
+      return h("div", { class: "container" }, [h("div", "hello world")]);
     }
   };
 
-  createApp(App).mount("#app");
+  const AppComponent = {
+    render() {
+      return h(ContainerComponent, () => []);
+    }
+  };
+
+  const ContainerComponentSlot = {
+    render() {
+      return h("div", { class: "container" }, [this.$slots.default()]);
+    }
+  };
+
+  const AppComponentSlot = {
+    render() {
+      return h(ContainerComponentSlot, [h("div", "hello slot")]);
+    }
+  };
+
+  const ContainerComponentSlotText = {
+    render() {
+      return h("div", { class: "container" }, [
+        this.$slots.default({ text: "hello slot text" })
+      ]);
+    }
+  };
+
+  const AppComponentSlotText = {
+    render() {
+      return h(ContainerComponentSlotText, props => [h("div", props.text)]);
+    }
+  };
+
+  const ContainerComponentSlotTextFoo = {
+    render() {
+      return h("div", { class: "container" }, [
+        this.$slots.foo({ text: "hello slot text foo" })
+      ]);
+    }
+  };
+
+  const AppComponentSlotTextFoo = {
+    render() {
+      return h(ContainerComponentSlotTextFoo, null, {
+        foo: props => [h("div", props.text)]
+      });
+    }
+  };
+
+  createApp(AppComponentSlotTextFoo).mount("#app");
 }
 
 // HMR setup. For more info see: https://parceljs.org/hmr.html

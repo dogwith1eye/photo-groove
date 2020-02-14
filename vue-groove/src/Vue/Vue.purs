@@ -58,8 +58,3 @@ named
   -> EffectFn1 (Record props) Element
   -> EffectFn1 (Record props) Element
 named = flip $ defineProperty "name"
-
--- Utils
-
-slots :: forall a. a -> Array Element
-slots a = vue .. "Children" ... "toArray" $ [ (a .. "$slots" .. "default") ]
