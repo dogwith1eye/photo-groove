@@ -14,4 +14,4 @@ containerSlot :: V.Component
 containerSlot p s = V.render "div" { class: "container" } [ V.slot s "default"]
 
 mkApp :: Record Props -> V.Element
-mkApp props = V.component containerSlot {} ["ps hello slot"]
+mkApp props = V.component containerSlot {} [(\sprops -> "pss hello slot")]

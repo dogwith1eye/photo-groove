@@ -74,6 +74,10 @@ function main() {
     return h(ContainerComponentSlotF, ["ff hello slot"]);
   };
 
+  const AppComponentSlotFFF = (props, ctx) => {
+    return h(ContainerComponentSlotF, sprops => ["ff hello slot"]);
+  };
+
   const ContainerComponentSlotText = {
     render() {
       return h("div", { class: "container" }, [
