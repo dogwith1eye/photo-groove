@@ -1,16 +1,14 @@
 module AppF where
 
-import Prelude
-
-import Effect (Effect)
-import Effect.Console (log)
-
 import VueF as V
 
 type Props = ()
 
-container :: V.ComponentF
-container c = V.createElement "div" { class: "container" } []
+container :: V.Component
+container p s = V.render "div" { class: "container" } []
 
-mkApp :: V.Element
-mkApp = V.createApp container
+containerHello :: V.Component
+containerHello p s = V.render "div" { class: "container" } [ "hello purescript" ]
+
+mkApp :: Record Props -> V.Element
+mkApp props = V.component containerHello {} []

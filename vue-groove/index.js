@@ -1,6 +1,6 @@
 //var Main = require("./output/Main");
 import { h, createApp } from "@vue/runtime-dom";
-import { mkApp as App } from "./output/App";
+import { mkApp as AppF } from "./output/AppF";
 
 function main() {
   /*
@@ -37,7 +37,17 @@ function main() {
   };
 
   const AppComponentF = (props, ctx) => {
+    console.log(ContainerComponentF);
     return h(ContainerComponentF, () => []);
+  };
+
+  const AppComponentFF = (props, ctx) => {
+    return h(
+      (a, b) => {
+        return h("div", { class: "container" }, [h("div", "ff hello world")]);
+      },
+      () => []
+    );
   };
 
   const ContainerComponentSlot = {
@@ -112,7 +122,7 @@ function main() {
     });
   };
 
-  createApp(AppComponentSlotTextFooF).mount("#app");
+  createApp(AppF).mount("#app");
 }
 
 // HMR setup. For more info see: https://parceljs.org/hmr.html
