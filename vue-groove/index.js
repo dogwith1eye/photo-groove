@@ -1,6 +1,6 @@
 //var Main = require("./output/Main");
 import { h, createApp } from "@vue/runtime-dom";
-import { mkApp as AppF } from "./output/AppF";
+import { mkApp4 as AppF } from "./output/AppF";
 
 function main() {
   /*
@@ -100,6 +100,10 @@ function main() {
 
   const AppComponentSlotTextF = (props, ctx) => {
     return h(ContainerComponentSlotTextF, sprops => [h("div", sprops.text)]);
+  };
+
+  const AppComponentSlotTextFF = (props, ctx) => {
+    return h(ContainerComponentSlotTextF, sprops => [h("div", sprops)]);
   };
 
   const ContainerComponentSlotTextFoo = {
