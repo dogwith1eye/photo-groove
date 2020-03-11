@@ -26,8 +26,3 @@ render c p cs = vue ... "h" $ args
 
 component :: forall p cs. Component -> p -> Array cs -> Element
 component c p cs = render (mkFn2 c) p cs
-
-renderComponentF :: Component -> Element
-renderComponentF f = vue ... "h" $ args
-  where
-    args = PA.unshift (mkFn2 f) []
