@@ -1,13 +1,13 @@
 module VueF
- ( Props, Setup, Element, Component
- , render, component
+ ( Props, Setup, Element, Component, Slot
+ , render, component, slot
  )
 where
 
 import Prelude
 
 import Data.Function.Uncurried (mkFn2)
-import FFI.Simple ((...))
+import FFI.Simple ((..), (...))
 import FFI.Simple.PseudoArray as PA
 
 foreign import data Vue :: Type
@@ -26,3 +26,8 @@ render c p cs = vue ... "h" $ args
 
 component :: forall p cs. Component -> p -> Array cs -> Element
 component c p cs = render (mkFn2 c) p cs
+
+foreign import data Slot :: Type
+
+slot :: Setup -> String -> Slot
+slot ctx name = ctx .. "slots" ... name $ []

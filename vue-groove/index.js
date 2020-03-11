@@ -70,6 +70,10 @@ function main() {
     return h(ContainerComponentSlotF, [h("div", "f hello slot")]);
   };
 
+  const AppComponentSlotFF = (props, ctx) => {
+    return h(ContainerComponentSlotF, ["ff hello slot"]);
+  };
+
   const ContainerComponentSlotText = {
     render() {
       return h("div", { class: "container" }, [
