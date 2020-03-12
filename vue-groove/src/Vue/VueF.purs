@@ -1,6 +1,6 @@
 module VueF
  ( Props, Setup, Element, Component, Slot
- , render, component, slot, slotProp, slotPropString
+ , render, component, componentSlot, slot, slotProp, slotPropString
  )
 where
 
@@ -24,6 +24,10 @@ render :: forall c p cs. c -> p -> Array cs -> Element
 render c p cs = vue ... "h" $ args
   where args = PA.unshift c $ PA.unshift p cs
 
+renderSlot :: forall c p cs. c -> p -> Record cs -> Element
+renderSlot c p cs = vue ... "h" $ args
+  where args = PA.unshift c $ PA.unshift p $ PA.unshift cs []
+
 component :: forall cs. Component -> Array cs -> Element
 component c cs = render (mkFn2 c) {} cs
 
@@ -37,3 +41,6 @@ slotProp ctx name prop = ctx .. "slots" ... name $ [prop]
 
 slotPropString :: Setup -> String -> String -> Slot
 slotPropString ctx name prop = ctx .. "slots" ... name $ [prop]
+
+componentSlot :: forall cs. Component -> (Record cs) -> Element
+componentSlot c cs = renderSlot (mkFn2 c) {} cs
