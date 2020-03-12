@@ -1,6 +1,6 @@
 //var Main = require("./output/Main");
 import { h, createApp } from "@vue/runtime-dom";
-import { mkApp4 as AppF } from "./output/AppF";
+import { mkApp5 as AppF } from "./output/AppF";
 
 function main() {
   /*

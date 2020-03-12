@@ -33,3 +33,6 @@ containerSlotPropRecord p s = V.render "div" { class: "container" } [ V.slotProp
 
 mkApp4 :: Record Props -> V.Element
 mkApp4 props = V.component containerSlotPropRecord [(\sprops -> V.render "div" sprops [])]
+
+mkApp5 :: Record Props -> V.Element
+mkApp5 props = V.component containerSlotPropRecord [(\sprops -> V.render "div" {} [sprops.text])]
